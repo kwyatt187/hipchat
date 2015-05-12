@@ -27,8 +27,8 @@ def chatstring2JSON(chatstring):
 
     # Find mentions
     mentions = []
-    for mention in re.finditer(r'@\w+', chatstring):
-        mentions.append(mention.group(0).replace('@',''))
+    for mention in re.finditer(r'@(\w+)', chatstring):
+        mentions.append(mention.group(1))
 
     # Add mentions to result
     if len(mentions) > 0:
