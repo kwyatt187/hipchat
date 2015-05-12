@@ -3,7 +3,7 @@ import re
 import json
 import urllib2
 
-def gettitle(url):
+def getTitle(url):
     """
     Gets title from webpage
     """
@@ -45,7 +45,7 @@ def chatstring2JSON(chatstring):
     links = []
     for link in re.finditer(r'https?://\S+', chatstring):
         url = link.group(0)
-        title = gettitle(url)
+        title = getTitle(url)
         links.append({'url': url, 'title': title})
 
     # Add links to result
