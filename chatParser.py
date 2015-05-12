@@ -11,7 +11,6 @@ def getTitle(url):
     try:
         page = urllib2.urlopen(url).read()
     except Exception, err:
-        print err
         return "Title not found"
 
     title = re.search(r'<title>(.+)</title>', page)
