@@ -11,9 +11,12 @@ def getTitle(url):
     try:
         page = urllib2.urlopen(url).read()
     except Exception, err:
-        return "Title not found"
+        return "Error opening url"
 
     title = re.search(r'<title>(.+)</title>', page)
+    if title is None:
+        return "Title not found"
+
     return title.group(1)
 
 def chatstring2JSON(chatstring):
