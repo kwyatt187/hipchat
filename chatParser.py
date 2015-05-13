@@ -10,7 +10,7 @@ def getTitle(url):
     title = None
     try:
         page = urllib2.urlopen(url).read()
-    except Exception, err:
+    except Exception:
         return "Error opening url"
 
     title = re.search(r'<title>(.+)</title>', page)
@@ -24,31 +24,36 @@ def chatstring2JSON(chatstring):
     Parses chat string and returns details as JSON string
     """
     results = {}
-
-    # Find mentions
     mentions = []
-    for mention in re.finditer(r'@(\w+)', chatstring):
-        mentions.append(mention.group(1))
+    emoticons = []
+    links = []
+
+    # Find metions, emoticons, and links
+    for token in chatstring.split():
+        mention = re.match(r'@(\w+)', token)
+        if mention is not None:
+            mentions.append(mention.group(1))
+            continue
+        
+        emoticon = re.match(r'\((\w{,15})\)', token)
+        if emoticon is not None:
+            emoticons.append(emoticon.group(1))
+            continue
+
+        link = re.match(r'https?://\S+', token)
+        if link is not None:
+            url = link.group(0)
+            title = getTitle(url)
+            links.append({'url': url, 'title': title})
+            continue
 
     # Add mentions to result
     if len(mentions) > 0:
         results['mentions'] = mentions
 
-    # Find emoticons
-    emoticons = []
-    for emoticon in re.finditer(r'\((\w{,15})\)', chatstring):
-        emoticons.append(emoticon.group(1))
-    
     # Add emoticons to result
     if len(emoticons) > 0:
         results['emoticons'] = emoticons
-
-    # Find links
-    links = []
-    for link in re.finditer(r'https?://\S+', chatstring):
-        url = link.group(0)
-        title = getTitle(url)
-        links.append({'url': url, 'title': title})
 
     # Add links to result
     if len(links) > 0:
